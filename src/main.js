@@ -14,7 +14,7 @@ import reflectionPictures from "./js/render-functions.js";
 
 const formSearch = document.querySelector(".search-form");
 const gallery = document.querySelector(".gallery");
-const loader = document.querySelector(".loader");
+
 
 
 
@@ -28,12 +28,11 @@ let lightbox = new SimpleLightbox(".gallery-item", {
 
 formSearch.addEventListener("submit", handleSearch);
 
-function handleSearch(event) {
+async function handleSearch(event) {
     event.preventDefault();
     
 
     gallery.innerHTML = "";
-    loader.style.display = "block";
 
     const inputValue = event.target.elements.query.value.trim();
 
@@ -43,13 +42,13 @@ function handleSearch(event) {
             message: "Sorry, there are no images matching your search query. Please try again!",
             position: "topRight",
         });
-        loader.style.display = "none";
         return;
     }
 
 
-    getPictures(inputValue)
-        .then(data => {
+    try {
+        const data = getPictures(inputValue);
+
             if (data.hits.length === 0) {
                 iziToast.info({
                     title: "No Results",
@@ -64,18 +63,15 @@ function handleSearch(event) {
 
             lightbox.refresh();
 
-        })
-        .catch(error => {
+        } catch (error) {
             iziToast.error({
                 title: "Error",
                 message: "Something went wrong. Please try again later",
                 position: "topRight"
             });
-        })
-        .finally(() => {
-            loader.style.display = "none";
+        } finally {
             event.target.reset();
-        });
+        };
 }
 
 

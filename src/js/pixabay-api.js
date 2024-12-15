@@ -1,7 +1,8 @@
 
-export default getPictures;
+import axios from "axios";
 
-function getPictures(query) {
+
+export default async function getPictures(query) {
     const BASE_URL = "https://pixabay.com/api/";
     const KEY = '47394920-a4032b33a38ab12c89a369f6a';
     
@@ -13,12 +14,11 @@ function getPictures(query) {
         safesearch: "true",
     });
 
-    return fetch(`${BASE_URL}?${params}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(response.statusText);
-            }
-            return response.json();
-        })
+    try {
+        const response = await axios(BASE_URL, { params });
+        return response.data;
+    } catch (error) {
+        alert(error.statusText);
+    }
         
 };
