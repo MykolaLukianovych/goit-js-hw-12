@@ -14,6 +14,7 @@ import reflectionPictures from "./js/render-functions.js";
 
 const formSearch = document.querySelector(".search-form");
 const gallery = document.querySelector(".gallery");
+const loadMoreBtn = document.querySelector(".load-btn-js")
 
 
 
@@ -26,7 +27,14 @@ let lightbox = new SimpleLightbox(".gallery-item", {
     captionDelay: 250,
 });
 
+let currentPage = 1;
+let currentQuery = "";
+
+loadMoreBtn.style.display = "none";
+
+
 formSearch.addEventListener("submit", handleSearch);
+loadMoreBtn.addEventListener("click", handleLoadMore);
 
 async function handleSearch(event) {
     event.preventDefault();
@@ -34,20 +42,22 @@ async function handleSearch(event) {
 
     gallery.innerHTML = "";
 
-    const inputValue = event.target.elements.query.value.trim();
+    currentQuery = event.target.elements.query.value.trim();
+    currentPage = 1;
 
-    if (inputValue === "") {
+    if (currentQuery === "") {
         iziToast.error({
             title: "No Results",
             message: "Sorry, there are no images matching your search query. Please try again!",
             position: "topRight",
         });
+        loadMoreBtn.style.display = "none";
         return;
     }
 
 
     try {
-        const data = getPictures(inputValue);
+        const data = await getPictures(currentQuery, currentPage);
 
             if (data.hits.length === 0) {
                 iziToast.info({
@@ -55,14 +65,23 @@ async function handleSearch(event) {
                     message: "Sorry, there are no images matching your search query. Please try again!",
                     position: "topRight",
                 });
+                loadMoreBtn.style.display = "none";
+                return
+            } else if (currentPage * 15 >= data.totalHits) {
+                loadMoreBtn.style.display = "none";
+                iziToast.info({
+                title: "End of Results",
+                message: "We're sorry, but you've reached the end of search results.",
+                position: "topRight",
+                });
                 return;
-            }
-
+        }
+            
             const markup = reflectionPictures(data.hits);
             gallery.innerHTML = markup;
 
-            lightbox.refresh();
-
+        lightbox.refresh();
+        loadMoreBtn.style.display = "block";
         } catch (error) {
             iziToast.error({
                 title: "Error",
@@ -72,6 +91,53 @@ async function handleSearch(event) {
         } finally {
             event.target.reset();
         };
+}
+
+async function handleLoadMore() {
+    currentPage += 1;
+
+    try {
+        const data = await getPictures(currentQuery, currentPage);
+
+        if (data.hits.length === 0) {
+            iziToast.info({
+                title: "End of Results",
+                message: "No more images to load.",
+                position: "topRight",
+            });
+            loadMoreBtn.style.display = "none";
+            return;
+        } else if (currentPage * 15 >= data.totalHits) {
+            loadMoreBtn.style.display = "none";
+                iziToast.info({
+                title: "End of Results",
+                message: "We're sorry, but you've reached the end of search results.",
+                position: "topRight",
+                });
+                return;
+        }
+
+        const markup = reflectionPictures(data.hits);
+        gallery.insertAdjacentHTML("beforeend", markup);
+
+        const image = document.querySelector(".gallery-item");
+        const imageHeight = image.getBoundingClientRect().height;
+
+        window.scrollBy({
+            left: 0,
+            top: imageHeight,
+            behavior: "smooth"
+        })
+        
+        lightbox.refresh();
+    } catch (error) {
+        iziToast.error({
+            title: "Error",
+            message: "Something went wrong. Please try again later.",
+            position: "topRight",
+        });
+    }
+
 }
 
 

@@ -83,3 +83,18 @@ img {
   display: flex;
   flex-direction: column;
 }
+
+.load-container {
+  display: flex;
+  justify-content: center;
+}
+
+.load-btn-js {
+  margin-top: 20px;
+  padding: 8px 16px;
+  color: #ffffff;
+  background-color: #4e75ff;
+  border: none;
+  border-radius: 8px;
+  margin-left: 8px;
+}
