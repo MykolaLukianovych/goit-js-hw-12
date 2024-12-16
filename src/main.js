@@ -14,9 +14,10 @@ import reflectionPictures from "./js/render-functions.js";
 
 const formSearch = document.querySelector(".search-form");
 const gallery = document.querySelector(".gallery");
-const loadMoreBtn = document.querySelector(".load-btn-js")
+const loadMoreBtn = document.querySelector(".load-btn-js");
+const loader = document.querySelector(".loader");
 
-
+loader.style.display = "none";
 
 
 let lightbox = new SimpleLightbox(".gallery-item", {
@@ -120,14 +121,13 @@ async function handleLoadMore() {
         const markup = reflectionPictures(data.hits);
         gallery.insertAdjacentHTML("beforeend", markup);
 
-        let oneImage = document.querySelector('.gallery-item');
-        let rect = oneImage.getBoundingClientRect();
+        let getCard = () => document.querySelector('.gallery-item').getBoundingClientRect();
         
-        window.scrollBy(0, -window.innerHeight);
-         window.scrollBy({
-             top: rect.height * 10,
-             behavior: 'smooth',
-         });
+        window.scrollBy({
+            top: getCard().height * 2,
+            left: 0,
+            behavior: 'smooth',
+         })
 
         lightbox.refresh();
     } catch (error) {
