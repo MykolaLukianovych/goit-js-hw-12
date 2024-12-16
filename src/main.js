@@ -31,6 +31,7 @@ let lightbox = new SimpleLightbox(".gallery-item", {
 let currentPage = 1;
 let currentQuery = "";
 
+
 loadMoreBtn.style.display = "none";
 
 
@@ -57,6 +58,7 @@ async function handleSearch(event) {
     }
 
     loader.style.display = "block";
+    loadMoreBtn.style.display = "none";
 
     try {
         const data = await getPictures(currentQuery, currentPage);
@@ -100,6 +102,7 @@ async function handleLoadMore() {
     currentPage += 1;
 
     loader.style.display = "block";
+    loadMoreBtn.style.display = "none";
 
     try {
         const data = await getPictures(currentQuery, currentPage);
@@ -142,6 +145,7 @@ async function handleLoadMore() {
         });
     } finally {
         loader.style.display = "none";
+        loadMoreBtn.style.display = "block";
     }
 
 }
