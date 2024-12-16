@@ -120,15 +120,15 @@ async function handleLoadMore() {
         const markup = reflectionPictures(data.hits);
         gallery.insertAdjacentHTML("beforeend", markup);
 
-        const image = document.querySelector(".gallery-item");
-        const imageHeight = image.getBoundingClientRect().height;
-
-        window.scrollBy({
-            left: 0,
-            top: imageHeight,
-            behavior: "smooth"
-        })
+        let oneImage = document.querySelector('.gallery-item');
+        let rect = oneImage.getBoundingClientRect();
         
+        window.scrollBy(0, -window.innerHeight);
+         window.scrollBy({
+             top: rect.height * 10,
+             behavior: 'smooth',
+         });
+
         lightbox.refresh();
     } catch (error) {
         iziToast.error({
