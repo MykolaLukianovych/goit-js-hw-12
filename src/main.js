@@ -56,6 +56,7 @@ async function handleSearch(event) {
         return;
     }
 
+    loader.style.display = "block";
 
     try {
         const data = await getPictures(currentQuery, currentPage);
@@ -90,12 +91,15 @@ async function handleSearch(event) {
                 position: "topRight"
             });
         } finally {
-            event.target.reset();
+        loader.style.display = "none";
+        event.target.reset();
         };
 }
 
 async function handleLoadMore() {
     currentPage += 1;
+
+    loader.style.display = "block";
 
     try {
         const data = await getPictures(currentQuery, currentPage);
@@ -127,7 +131,7 @@ async function handleLoadMore() {
             top: getCard().height * 2,
             left: 0,
             behavior: 'smooth',
-         })
+         });
 
         lightbox.refresh();
     } catch (error) {
@@ -136,6 +140,8 @@ async function handleLoadMore() {
             message: "Something went wrong. Please try again later.",
             position: "topRight",
         });
+    } finally {
+        loader.style.display = "none";
     }
 
 }
