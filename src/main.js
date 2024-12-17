@@ -71,7 +71,7 @@ async function handleSearch(event) {
                 });
                 loadMoreBtn.style.display = "none";
                 return
-            } else if (currentPage * 15 >= data.totalHits) {
+            } else if (gallery.children.length >= data.totalHits) {
                 loadMoreBtn.style.display = "none";
                 iziToast.info({
                 title: "End of Results",
@@ -115,14 +115,6 @@ async function handleLoadMore() {
             });
             loadMoreBtn.style.display = "none";
             return;
-        } else if (currentPage * 15 >= data.totalHits) {
-            loadMoreBtn.style.display = "none";
-                iziToast.info({
-                title: "End of Results",
-                message: "We're sorry, but you've reached the end of search results.",
-                position: "topRight",
-                });
-                return;
         }
 
         const markup = reflectionPictures(data.hits);
@@ -137,6 +129,18 @@ async function handleLoadMore() {
          });
 
         lightbox.refresh();
+
+        if (gallery.children.length >= data.totalHits) {
+            loadMoreBtn.style.display = "none";
+                iziToast.info({
+                title: "End of Results",
+                message: "We're sorry, but you've reached the end of search results.",
+                position: "topRight",
+                });
+            return;
+        } else {
+            loadMoreBtn.style.display = "block";
+        }
     } catch (error) {
         iziToast.error({
             title: "Error",
@@ -145,7 +149,6 @@ async function handleLoadMore() {
         });
     } finally {
         loader.style.display = "none";
-        loadMoreBtn.style.display = "block";
     }
 
 }
